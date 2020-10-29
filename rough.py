@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as MessageBox
 import mysql.connector as mysql
-
+from PIL import ImageTk,Image
 def addmed():
 
     con = mysql.connect(
@@ -21,6 +21,27 @@ def addmed():
     med_cost_adder.delete(0,END)
     med_brand_adder.delete(0,END)
 
+def addlogin():
+    con = mysql.connect(
+    host="localhost",
+    user="root",
+    password="LETSdoDBMS8",
+    database="dbms_medicine"
+    )
+
+    cursor = con.cursor()
+    print("INSERT INTO login VALUES ('"+login_id_adder.get()+"', '"+login_username_adder.get()+"', '"+login_password_adder.get()+"')")
+    cursor.execute("INSERT INTO login VALUES ('"+login_id_adder.get()+"', '"+login_username_adder.get()+"', '"+login_password_adder.get()+"')")
+    cursor.execute("INSERT INTO role VALUES ('"+role_id_adder.get()+"','"+role_type_adder.get()+"', '"+login_id_adder.get()+"')")
+    con.commit()
+    con.close()
+
+    login_id_adder.delete(0,END)
+    login_username_adder.delete(0,END)
+    login_password_adder.delete(0,END)
+    role_id_adder.delete(0,END)
+    role_type_adder.delete(0,END)
+
 def addbatch():
 
     con = mysql.connect(
@@ -31,7 +52,8 @@ def addbatch():
     )
 
     cursor = con.cursor()
-    cursor.execute("INSERT INTO batch VALUES ('"+batch_no_adder.get()+"', '"+batch_med_stock_adder.get()+"', '"+batch_mfg_adder.get()+"', '"+batch_expdate_adder.get()+"')")
+    print("INSERT INTO batch VALUES ('"+batch_no_adder.get()+"', '"+batch_med_stock_adder.get()+"', '"+batch_mfg_adder.get()+"', '"+batch_expdate_adder.get()+"', '"+batch_med_id_adder.get()+"'")
+    cursor.execute("INSERT INTO batch VALUES ('"+batch_no_adder.get()+"', '"+batch_med_stock_adder.get()+"', '"+batch_mfg_adder.get()+"', '"+batch_expdate_adder.get()+"', '"+batch_med_id_adder.get()+"')")
     con.commit()
     con.close()
 
@@ -39,6 +61,7 @@ def addbatch():
     batch_med_stock_adder.delete(0,END)
     batch_mfg_adder.delete(0,END)
     batch_expdate_adder.delete(0,END)
+    batch_med_id_adder.delete(0,END)
 
 def addorg():
     con = mysql.connect(
@@ -99,15 +122,23 @@ def addsaledetails():
     sale_user_id_adder.delete(0,END)
     sale_org_id_adder.delete(0,END)
 
-'''def addsales():
+def addsale():
+    con = mysql.connect(
+    host="localhost",
+    user="root",
+    password="LETSdoDBMS8",
+    database="dbms_medicine"
+    )
+
+    cursor = con.cursor()
+    cursor.execute("INSERT INTO sale_details VALUES ('"+sale_id_adder.get()+"', '"+sale_med_id_adder.get()+"', '"+sale_med_cost_adder.get()+"', '"+sale_batch_id_adder.get()+"', '"+sale_quantity_adder.get()+"', '"+sale_quantity_adder*sale_med_cost_adder.get()+"')")
+    con.commit()
+    con.close()
     sale_id_adder.delete(0,END)
     sale_med_id_adder.delete(0,END)
-    #med_cost_adder
-    sale_amount_adder.delete(0,END)
-    sale_batch_no_adder.delete(0,END)
+    sale_med_cost_adder.delete(0,END)
+    sale_batch_id_adder.delete(0,END)
     sale_quantity_adder.delete(0,END)
-    
-'''
 
 '''def var1():
     return var.get()
@@ -132,6 +163,21 @@ def updatemed():
     cursor.execute("UPDATE medicine SET MEDICINE_NAME='"+med_name_updater.get()+"', medicine_cost='"+med_cost_updater.get()+"', medicine_brand= '"+med_brand_updater.get()+"' where medicine_id='"+med_id_updater.get()+"'")
     con.commit()
     con.close()
+def updatelogin():
+    con = mysql.connect(
+    host="localhost",
+    user="root",
+    password="LETSdoDBMS8",
+    database="dbms_medicine"
+    )
+    batch_no_updater.config(state=DISABLED)
+    cursor = con.cursor()
+    cursor.execute("UPDATE login SET  login_username='"+login_username_updater.get()+"', login_password= '"+login_password_updater.get()+"' where login_id='"+login_id_updater.get()+"'")
+    cursor.execute("UPDATE role SET  role_type='"+role_id_updater.get()+"', role_user_id= '"+login_id_updater.get()+"' where role_id='"+role_id_updater.get()+"'")
+
+    con.commit()
+    con.close()
+    
 
 def updatebatch():
     con = mysql.connect(
@@ -142,7 +188,7 @@ def updatebatch():
     )
     batch_no_updater.config(state=DISABLED)
     cursor = con.cursor()
-    cursor.execute("UPDATE batch SET MEDICINE_STOCK='"+batch_med_stock_updater.get()+"', MANUFACTURE_DATE='"+batch_mfg_updater.get()+"', EXPIRY_DATE= '"+batch_expdate_updater.get()+"' where BATCH_NO='"+batch_no_updater.get()+"'")
+    cursor.execute("UPDATE batch SET MEDICINE_STOCK='"+batch_med_stock_updater.get()+"', MANUFACTURE_DATE='"+batch_mfg_updater.get()+"', EXPIRY_DATE= '"+batch_expdate_updater.get()+"', MED_ID='"+batch_med_id_updater.get()+"' where BATCH_NO='"+batch_no_updater.get()+"'")
     con.commit()
     con.close()
 
@@ -170,6 +216,19 @@ def updatesaledetails():
     con.commit()
     con.close()
 
+def updatesale():
+    con = mysql.connect(
+    host="localhost",
+    user="root",
+    password="LETSdoDBMS8",
+    database="dbms_medicine"
+    )
+    cursor = con.cursor()
+    cursor.execute("UPDATE sales SET medicine_cost='"+sale_med_cost_updater.get()+"', medicine_id='"+sale_med_id_updater.get()+"', batch_id='"+sale_batch_id_updater.get()+"', quantity='"+sale_quantity_updater.get()+"', amount='"+sale_quantity_updater.get()*sale_med_cost_updater+"' where sale_id='"+sale_id_updater.get()+"'")
+    con.commit()
+    con.close()
+
+
 def updateuser():
     con = mysql.connect(
     host="localhost",
@@ -181,276 +240,400 @@ def updateuser():
     cursor.execute("UPDATE user_info SET phone_number='"+user_phone_updater.get()+"', email='"+user_email_updater.get()+"', street_user='"+user_street_updater.get()+"', user_city='"+user_city_updater.get()+"', user_state='"+user_state_updater.get()+"', pincode='"+user_pincode_updater.get()+"'where username='"+username_updater.get()+"'")
     con.commit()
     con.close()
+
 def add():
     global adder
     adder=Tk()
     adder.title("Add a record")
-    adder.geometry("600x700")
+    adder.geometry("1100x900")
     '''v = Scrollbar(adder)
     t = Text(adder, width = 15, height = 15, wrap = NONE, yscrollcommand = v.set)
     v.config(command=t.yview)
     v.grid(sticky=E, row = 0, rowspan =10, column = 20, ipady = 1000)'''
-
-
+    i=0
     med_id_label_adder= Label(adder,text='Enter med_id', font=('bold', 10))
-    med_id_label_adder.grid(row=0, column=0)
+    med_id_label_adder.grid(row=i, column=0)
     med_name_label_adder = Label (adder, text='Enter med_name', font=('bold',10))
-    med_name_label_adder.grid(row=1, column=0)
+    med_name_label_adder.grid(row=i+1, column=0)
     med_cost_label_adder= Label( adder,text='Enter med_cost', font=('bold', 10))
-    med_cost_label_adder.grid(row=2, column=0)
+    med_cost_label_adder.grid(row=i+2, column=0)
     med_brand_label_adder = Label (adder, text='Enter med_brand', font=('bold',10))
-    med_brand_label_adder.grid(row=3, column=0)
+    med_brand_label_adder.grid(row=i+3, column=0)
     
     global med_id_adder,med_name_adder,med_cost_adder,med_brand_adder
     med_id_adder= Entry(adder,width=30)
-    med_id_adder.grid(row=0, column=1)
+    med_id_adder.grid(row=i+0, column=1)
     med_name_adder= Entry(adder,width=30)
-    med_name_adder.grid(row=1, column=1)
+    med_name_adder.grid(row=i+1, column=1)
     med_cost_adder= Entry(adder,width=30)
-    med_cost_adder.grid(row=2, column=1)
+    med_cost_adder.grid(row=i+2, column=1)
     med_brand_adder= Entry(adder,width=30)
-    med_brand_adder.grid(row=3, column=1)
+    med_brand_adder.grid(row=i+3, column=1)
     addmed1 = Button(adder, text="Add Medicine Data", command=addmed)
-    addmed1.grid(row=4,column=0)
+    addmed1.grid(row=i+6,column=0)
 
+    login_id_label_adder=Label(adder,text='Enter login_id', font=('bold', 10))
+    login_id_label_adder.grid(row=i, column=3)
+    login_username_label_adder = Label (adder, text='Enter login_username', font=('bold',10))
+    login_username_label_adder.grid(row=i+1, column=3)
+    login_password_label_adder= Label( adder,text='Enter login_password', font=('bold', 10))
+    login_password_label_adder.grid(row=i+2, column=3)
+    role_id_label_adder= Label(adder,text='Enter role_id',font=('bold', 10))
+    role_id_label_adder.grid(row=i+3, column=3)
+    role_type_label_adder= Label(adder,text='Enter role_type',font=('bold', 10))
+    role_type_label_adder.grid(row=i+4, column=3)
+    
+    global login_id_adder, login_username_adder, login_password_adder, role_id_adder, role_type_adder
+    login_id_adder= Entry(adder,width=30)
+    login_id_adder.grid(row=i, column=4)
+    login_username_adder= Entry(adder,width=30)
+    login_username_adder.grid(row=i+1, column=4)
+    login_password_adder= Entry(adder,width=30,show='*')
+    login_password_adder.grid(row=i+2, column=4)
+    role_id_adder= Entry(adder,width=30)
+    role_id_adder.grid(row=i+3, column=4)
+    role_type_adder= Entry(adder,width=30)
+    role_type_adder.grid(row=i+4, column=4)
+    
+    addlogin1 = Button(adder, text="Add login Data", command=addlogin)
+    addlogin1.grid(row=i+6,column=4,pady=(10,0))
+
+    i=7
     batch_no_label_adder= Label( adder,text='Enter batch_no', font=('bold', 10))
-    batch_no_label_adder.grid(row=5, column=0,pady=(10,0))
+    batch_no_label_adder.grid(row=i, column=0,pady=(10,0))
     batch_med_stock_label_adder = Label (adder, text='Enter batch_med_stock', font=('bold',10))
-    batch_med_stock_label_adder.grid(row=6, column=0)
+    batch_med_stock_label_adder.grid(row=i+1, column=0)
     batch_mfg_label_adder= Label( adder,text='Enter batch_mfg', font=('bold', 10))
-    batch_mfg_label_adder.grid(row=7, column=0)
+    batch_mfg_label_adder.grid(row=i+2, column=0)
     batch_expdate_label_adder = Label (adder, text='Enter batch_expdate', font=('bold',10))
-    batch_expdate_label_adder.grid(row=8, column=0)
+    batch_expdate_label_adder.grid(row=i+3, column=0)
+    batch_med_id_label_adder= Label( adder, text='Enter Med_id', font=('bold',10))
+    batch_med_id_label_adder.grid(row=i+4, column=0)
     
-    global batch_no_adder,batch_med_stock_adder,batch_mfg_adder,batch_expdate_adder
+    global batch_no_adder,batch_med_stock_adder,batch_mfg_adder,batch_expdate_adder,batch_med_id_adder
     batch_no_adder= Entry(adder,width=30)
-    batch_no_adder.grid(row=5, column=1, pady=(10,0))
+    batch_no_adder.grid(row=i, column=1, pady=(10,0))
     batch_med_stock_adder= Entry(adder,width=30)
-    batch_med_stock_adder.grid(row=6, column=1)
+    batch_med_stock_adder.grid(row=i+1, column=1)
     batch_mfg_adder= Entry(adder,width=30)
-    batch_mfg_adder.grid(row=7, column=1)
+    batch_mfg_adder.grid(row=i+2, column=1)
     batch_expdate_adder= Entry(adder,width=30)
-    batch_expdate_adder.grid(row=8, column=1)
+    batch_expdate_adder.grid(row=i+3, column=1)
+    batch_med_id_adder=Entry(adder, width=30)
+    batch_med_id_adder.grid(row=i+4, column=1)
     addbatch1 = Button(adder, text="Add Batch Data", command=addbatch)
-    addbatch1.grid(row=9, column=0)
+    addbatch1.grid(row=i+6, column=0,pady=(10,0))
     
+    i=15
     org_id_label_adder= Label(adder,text='Enter org_id', font=('bold', 10))
-    org_id_label_adder.grid(row=10, column=0)
+    org_id_label_adder.grid(row=i, column=0,pady=(10,0))
     org_name_label_adder = Label (adder, text='Enter org_name', font=('bold',10))
-    org_name_label_adder.grid(row=11, column=0)
+    org_name_label_adder.grid(row=i+1, column=0)
     org_type_label_adder= Label( adder,text='Enter org_type', font=('bold', 10))
-    org_type_label_adder.grid(row=12, column=0)
+    org_type_label_adder.grid(row=i+2, column=0)
     org_contact_label_adder = Label (adder, text='Enter org_contact', font=('bold',10))
-    org_contact_label_adder.grid(row=13, column=0)
+    org_contact_label_adder.grid(row=i+3, column=0)
     
     global org_id_adder,org_name_adder,org_type_adder,org_contact_adder
     org_id_adder= Entry(adder,width=30)
-    org_id_adder.grid(row=10, column=1)
+    org_id_adder.grid(row=i+0, column=1,pady=(10,0))
     org_name_adder= Entry(adder,width=30)
-    org_name_adder.grid(row=11, column=1)
+    org_name_adder.grid(row=i+1, column=1)
     org_type_adder= Entry(adder,width=30)
-    org_type_adder.grid(row=12, column=1)
+    org_type_adder.grid(row=i+2, column=1)
     org_contact_adder= Entry(adder,width=30)
-    org_contact_adder.grid(row=13, column=1)
+    org_contact_adder.grid(row=i+3, column=1)
     addorg1 = Button(adder, text="Add Org Data", command=addorg)
-    addorg1.grid(row=14,column=0)
+    addorg1.grid(row=i+5,column=0,pady=(10,0))
 
     '''global var
     var= IntVar()
     global check
     check=Checkbutton(adder,text="Use same org_id",variable=var,command=lambda: activateCheck(var))
     check.grid(row=15,column=2)'''
-
+    i=21
     sale_date_label_adder= Label(adder,text='Enter sale_date', font=('bold', 10))
-    sale_date_label_adder.grid(row=15, column=0)
+    sale_date_label_adder.grid(row=i, column=0,pady=(10,0))
     sale_id_label_adder = Label (adder, text='Enter sale_id', font=('bold',10))
-    sale_id_label_adder.grid(row=16, column=0)
+    sale_id_label_adder.grid(row=i+1, column=0)
     sale_user_id_label_adder= Label( adder,text='Enter sale_user_id', font=('bold', 10))
-    sale_user_id_label_adder.grid(row=17, column=0)
+    sale_user_id_label_adder.grid(row=i+2, column=0)
     sale_org_id_label_adder = Label (adder, text='Enter sale_org_id', font=('bold',10))
-    sale_org_id_label_adder.grid(row=18, column=0)
+    sale_org_id_label_adder.grid(row=i+3, column=0)
     
     global sale_date_adder,sale_id_adder,sale_user_id_adder,sale_org_id_adder
     sale_date_adder= Entry(adder,width=30)
-    sale_date_adder.grid(row=15, column=1)
+    sale_date_adder.grid(row=i, column=1,pady=(10,0))
     sale_id_adder= Entry(adder,width=30)
-    sale_id_adder.grid(row=16, column=1)
+    sale_id_adder.grid(row=i+1, column=1)
     sale_user_id_adder= Entry(adder,width=30)
-    sale_user_id_adder.grid(row=17, column=1)
+    sale_user_id_adder.grid(row=i+2, column=1)
     sale_org_id_adder= Entry(adder,width=30)
-    sale_org_id_adder.grid(row=18, column=1)
+    sale_org_id_adder.grid(row=i+3, column=1)
     
     addsaledet1 = Button(adder, text="Add sale details Data", command=addsaledetails)
-    addsaledet1.grid(row=19,column=0)
+    addsaledet1.grid(row=i+6,column=0,pady=(10,0))
 
+    #sales
+    sale_med_id_label_adder = Label (adder, text='Enter sale_med_id', font=('bold',10))
+    sale_med_id_label_adder.grid(row=i, column=3,pady=(10,0))
+    sale_med_cost_label_adder= Label( adder,text='Enter sale_med_cost', font=('bold', 10))
+    sale_med_cost_label_adder.grid(row=i+1, column=3)
+    sale_batch_id_label_adder = Label (adder, text='Enter sale_batch_id', font=('bold',10))
+    sale_batch_id_label_adder.grid(row=i+2, column=3)
+    sale_quantity_label_adder=Label(adder, text='Enter sale_quantity', font=('bold',10))
+    sale_quantity_label_adder.grid(row=i+3, column=3)
+    sale_amount_label_adder= Label(adder, text='Sale Amount', font=('bold',10))
+    sale_amount_label_adder.grid(row=i+4,column=3)
+    
+    global sale_med_id_adder,sale_med_cost_adder,sale_batch_id_adder,sale_quantity_adder,sale_amount_adder
+    sale_med_id_adder= Entry(adder,width=30)
+    sale_med_id_adder.grid(row=i, column=4,pady=(10,0))
+    sale_med_cost_adder= Entry(adder,width=30)
+    sale_med_cost_adder.grid(row=i+1, column=4)
+    sale_batch_id_adder= Entry(adder,width=30)
+    sale_batch_id_adder.grid(row=i+2, column=4)
+    sale_quantity_adder= Entry(adder,width=30)
+    sale_quantity_adder.grid(row=i+3, column=4)
+    sale_amount_adder= Entry(adder,width=30)
+    sale_amount_adder.grid(row=i+4, column=4)
+
+    
+    addsale1 = Button(adder, text="Add sale Data", command=addsale)
+    addsale1.grid(row=i+6,column=4,pady=(10,0))
+    
+
+    i=28
     username_label_adder= Label(adder,text='Enter username', font=('bold', 10))
-    username_label_adder.grid(row=20, column=0)
+    username_label_adder.grid(row=i, column=0,pady=(10,0))
     user_phone_label_adder = Label (adder, text='Enter user_phone', font=('bold',10))
-    user_phone_label_adder.grid(row=21, column=0)
+    user_phone_label_adder.grid(row=i+1, column=0)
     user_email_label_adder= Label( adder,text='Enter user_email', font=('bold', 10))
-    user_email_label_adder.grid(row=22, column=0)
+    user_email_label_adder.grid(row=i+2, column=0)
     user_street_label_adder = Label (adder, text='Enter user_street', font=('bold',10))
-    user_street_label_adder.grid(row=23, column=0)
+    user_street_label_adder.grid(row=i+3, column=0)
     user_city_label_adder= Label(adder,text='Enter user_city', font=('bold', 10))
-    user_city_label_adder.grid(row=24, column=0)
+    user_city_label_adder.grid(row=i+4, column=0)
     user_state_label_adder = Label (adder, text='Enter user_state', font=('bold',10))
-    user_state_label_adder.grid(row=25, column=0)
+    user_state_label_adder.grid(row=i+5, column=0)
     user_pincode_label_adder= Label( adder,text='Enter user_pincode', font=('bold', 10))
-    user_pincode_label_adder.grid(row=26, column=0)
+    user_pincode_label_adder.grid(row=i+6, column=0)
     
     global username_adder,user_phone_adder,user_email_adder,user_street_adder,user_city_adder,user_state_adder,user_pincode_adder
     username_adder= Entry(adder,width=30)
-    username_adder.grid(row=20, column=1)
+    username_adder.grid(row=i+0, column=1,pady=(10,0))
     user_phone_adder= Entry(adder,width=30)
-    user_phone_adder.grid(row=21, column=1)
+    user_phone_adder.grid(row=i+1, column=1)
     user_email_adder= Entry(adder,width=30)
-    user_email_adder.grid(row=22, column=1)
+    user_email_adder.grid(row=i+2, column=1)
     user_street_adder= Entry(adder,width=30)
-    user_street_adder.grid(row=23, column=1)
+    user_street_adder.grid(row=i+3, column=1)
     user_city_adder= Entry(adder,width=30)
-    user_city_adder.grid(row=24, column=1)
+    user_city_adder.grid(row=i+4, column=1)
     user_state_adder= Entry(adder,width=30)
-    user_state_adder.grid(row=25, column=1)
+    user_state_adder.grid(row=i+5, column=1)
     user_pincode_adder= Entry(adder,width=30)
-    user_pincode_adder.grid(row=26, column=1)
+    user_pincode_adder.grid(row=i+6, column=1)
     adduser1 = Button(adder, text="Add User Data", command=adduser)
-    adduser1.grid(row=27,column=0)
-    
+    adduser1.grid(row=i+8,column=0,pady=(10,0))
     adder.mainloop()
+
 def updater():
     global updater
     updater=Tk()
     updater.title("Update a record")
-    updater.geometry("600x700")
+    updater.geometry("1100x900")
     '''v = Scrollbar(updater)
     t = Text(updater, width = 15, height = 15, wrap = NONE, yscrollcommand = v.set)
     v.config(command=t.yview)
     v.grid(sticky=E, row = 0, rowspan =10, column = 20, ipady = 1000)'''
-
+    i=0
     med_id_label_updater= Label(updater,text='Enter med_id', font=('bold', 10))
-    med_id_label_updater.grid(row=0, column=0)
+    med_id_label_updater.grid(row=i, column=0)
     med_name_label_updater = Label (updater, text='Enter med_name', font=('bold',10))
-    med_name_label_updater.grid(row=1, column=0)
+    med_name_label_updater.grid(row=i+1, column=0)
     med_cost_label_updater= Label( updater,text='Enter med_cost', font=('bold', 10))
-    med_cost_label_updater.grid(row=2, column=0)
+    med_cost_label_updater.grid(row=i+2, column=0)
     med_brand_label_updater = Label (updater, text='Enter med_brand', font=('bold',10))
-    med_brand_label_updater.grid(row=3, column=0)
+    med_brand_label_updater.grid(row=i+3, column=0)
     
     global med_id_updater,med_name_updater,med_cost_updater,med_brand_updater
     med_id_updater= Entry(updater,width=30)
-    med_id_updater.grid(row=0, column=1)
+    med_id_updater.grid(row=i+0, column=1)
     med_name_updater= Entry(updater,width=30)
-    med_name_updater.grid(row=1, column=1)
+    med_name_updater.grid(row=i+1, column=1)
     med_cost_updater= Entry(updater,width=30)
-    med_cost_updater.grid(row=2, column=1)
+    med_cost_updater.grid(row=i+2, column=1)
     med_brand_updater= Entry(updater,width=30)
-    med_brand_updater.grid(row=3, column=1)
+    med_brand_updater.grid(row=i+3, column=1)
     updatemed1 = Button(updater, text="Update Medicine Data", command=updatemed)
-    updatemed1.grid(row=4,column=0)
+    updatemed1.grid(row=i+6,column=0)
 
+    login_id_label_updater=Label(updater,text='Enter login_id', font=('bold', 10))
+    login_id_label_updater.grid(row=i, column=3)
+    login_username_label_updater = Label (updater, text='Enter login_username', font=('bold',10))
+    login_username_label_updater.grid(row=i+1, column=3)
+    login_password_label_updater= Label( updater,text='Enter login_password', font=('bold', 10))
+    login_password_label_updater.grid(row=i+2, column=3)
+    role_id_label_updater= Label(updater,text='Enter role_id',font=('bold', 10))
+    role_id_label_updater.grid(row=i+3, column=3)
+    role_type_label_updater= Label(updater,text='Enter role_type',font=('bold', 10))
+    role_type_label_updater.grid(row=i+4, column=3)
+    
+    global login_id_updater, login_username_updater, login_password_updater, role_id_updater, role_type_updater
+    login_id_updater= Entry(updater,width=30)
+    login_id_updater.grid(row=i, column=4)
+    login_username_updater= Entry(updater,width=30)
+    login_username_updater.grid(row=i+1, column=4)
+    login_password_updater= Entry(updater,width=30,show='*')
+    login_password_updater.grid(row=i+2, column=4)
+    role_id_updater= Entry(updater,width=30)
+    role_id_updater.grid(row=i+3, column=4)
+    role_type_updater= Entry(updater,width=30)
+    role_type_updater.grid(row=i+4, column=4)
+    
+    updatelogin1 = Button(updater, text="Update login Data", command=updatelogin)
+    updatelogin1.grid(row=i+6,column=4,pady=(10,0))
+
+    i=7
     batch_no_label_updater= Label( updater,text='Enter batch_no', font=('bold', 10))
-    batch_no_label_updater.grid(row=5, column=0,pady=(10,0))
+    batch_no_label_updater.grid(row=i, column=0,pady=(10,0))
     batch_med_stock_label_updater = Label (updater, text='Enter batch_med_stock', font=('bold',10))
-    batch_med_stock_label_updater.grid(row=6, column=0)
+    batch_med_stock_label_updater.grid(row=i+1, column=0)
     batch_mfg_label_updater= Label( updater,text='Enter batch_mfg', font=('bold', 10))
-    batch_mfg_label_updater.grid(row=7, column=0)
+    batch_mfg_label_updater.grid(row=i+2, column=0)
     batch_expdate_label_updater = Label (updater, text='Enter batch_expdate', font=('bold',10))
-    batch_expdate_label_updater.grid(row=8, column=0)
+    batch_expdate_label_updater.grid(row=i+3, column=0)
+    batch_med_id_label_updater= Label( updater, text='Enter Med_id', font=('bold',10))
+    batch_med_id_label_updater.grid(row=i+4, column=0)
     
-    global batch_no_updater,batch_med_stock_updater,batch_mfg_updater,batch_expdate_updater
+    global batch_no_updater,batch_med_stock_updater,batch_mfg_updater,batch_expdate_updater,batch_med_id_updater
     batch_no_updater= Entry(updater,width=30)
-    batch_no_updater.grid(row=5, column=1, pady=(10,0))
+    batch_no_updater.grid(row=i, column=1, pady=(10,0))
     batch_med_stock_updater= Entry(updater,width=30)
-    batch_med_stock_updater.grid(row=6, column=1)
+    batch_med_stock_updater.grid(row=i+1, column=1)
     batch_mfg_updater= Entry(updater,width=30)
-    batch_mfg_updater.grid(row=7, column=1)
+    batch_mfg_updater.grid(row=i+2, column=1)
     batch_expdate_updater= Entry(updater,width=30)
-    batch_expdate_updater.grid(row=8, column=1)
+    batch_expdate_updater.grid(row=i+3, column=1)
+    batch_med_id_updater=Entry(updater, width=30)
+    batch_med_id_updater.grid(row=i+4, column=1)
     updatebatch1 = Button(updater, text="Update Batch Data", command=updatebatch)
-    updatebatch1.grid(row=9, column=0)
+    updatebatch1.grid(row=i+6, column=0,pady=(10,0))
     
-
+    i=15
     org_id_label_updater= Label(updater,text='Enter org_id', font=('bold', 10))
-    org_id_label_updater.grid(row=10, column=0)
+    org_id_label_updater.grid(row=i, column=0,pady=(10,0))
     org_name_label_updater = Label (updater, text='Enter org_name', font=('bold',10))
-    org_name_label_updater.grid(row=11, column=0)
+    org_name_label_updater.grid(row=i+1, column=0)
     org_type_label_updater= Label( updater,text='Enter org_type', font=('bold', 10))
-    org_type_label_updater.grid(row=12, column=0)
+    org_type_label_updater.grid(row=i+2, column=0)
     org_contact_label_updater = Label (updater, text='Enter org_contact', font=('bold',10))
-    org_contact_label_updater.grid(row=13, column=0)
+    org_contact_label_updater.grid(row=i+3, column=0)
     
     global org_id_updater,org_name_updater,org_type_updater,org_contact_updater
     org_id_updater= Entry(updater,width=30)
-    org_id_updater.grid(row=10, column=1)
+    org_id_updater.grid(row=i+0, column=1,pady=(10,0))
     org_name_updater= Entry(updater,width=30)
-    org_name_updater.grid(row=11, column=1)
+    org_name_updater.grid(row=i+1, column=1)
     org_type_updater= Entry(updater,width=30)
-    org_type_updater.grid(row=12, column=1)
+    org_type_updater.grid(row=i+2, column=1)
     org_contact_updater= Entry(updater,width=30)
-    org_contact_updater.grid(row=13, column=1)
+    org_contact_updater.grid(row=i+3, column=1)
     updateorg1 = Button(updater, text="Update Org Data", command=updateorg)
-    updateorg1.grid(row=14,column=0)
+    updateorg1.grid(row=i+5,column=0,pady=(10,0))
 
     '''global var
     var= IntVar()
     global check
     check=Checkbutton(updater,text="Use same org_id",variable=var,command=lambda: activateCheck(var))
     check.grid(row=15,column=2)'''
-
+    i=21
     sale_date_label_updater= Label(updater,text='Enter sale_date', font=('bold', 10))
-    sale_date_label_updater.grid(row=15, column=0)
+    sale_date_label_updater.grid(row=i, column=0,pady=(10,0))
     sale_id_label_updater = Label (updater, text='Enter sale_id', font=('bold',10))
-    sale_id_label_updater.grid(row=16, column=0)
+    sale_id_label_updater.grid(row=i+1, column=0)
     sale_user_id_label_updater= Label( updater,text='Enter sale_user_id', font=('bold', 10))
-    sale_user_id_label_updater.grid(row=17, column=0)
+    sale_user_id_label_updater.grid(row=i+2, column=0)
     sale_org_id_label_updater = Label (updater, text='Enter sale_org_id', font=('bold',10))
-    sale_org_id_label_updater.grid(row=18, column=0)
+    sale_org_id_label_updater.grid(row=i+3, column=0)
     
     global sale_date_updater,sale_id_updater,sale_user_id_updater,sale_org_id_updater
     sale_date_updater= Entry(updater,width=30)
-    sale_date_updater.grid(row=15, column=1)
+    sale_date_updater.grid(row=i, column=1,pady=(10,0))
     sale_id_updater= Entry(updater,width=30)
-    sale_id_updater.grid(row=16, column=1)
+    sale_id_updater.grid(row=i+1, column=1)
     sale_user_id_updater= Entry(updater,width=30)
-    sale_user_id_updater.grid(row=17, column=1)
+    sale_user_id_updater.grid(row=i+2, column=1)
     sale_org_id_updater= Entry(updater,width=30)
-    sale_org_id_updater.grid(row=18, column=1)
+    sale_org_id_updater.grid(row=i+3, column=1)
     
     updatesaledet1 = Button(updater, text="Update sale details Data", command=updatesaledetails)
-    updatesaledet1.grid(row=19,column=0)
+    updatesaledet1.grid(row=i+6,column=0,pady=(10,0))
 
+    #sales
+    sale_med_id_label_updater = Label (updater, text='Enter sale_med_id', font=('bold',10))
+    sale_med_id_label_updater.grid(row=i, column=3,pady=(10,0))
+    sale_med_cost_label_updater= Label( updater,text='Enter sale_med_cost', font=('bold', 10))
+    sale_med_cost_label_updater.grid(row=i+1, column=3)
+    sale_batch_id_label_updater = Label (updater, text='Enter sale_batch_id', font=('bold',10))
+    sale_batch_id_label_updater.grid(row=i+2, column=3)
+    sale_quantity_label_updater=Label(updater, text='Enter sale_quantity', font=('bold',10))
+    sale_quantity_label_updater.grid(row=i+3, column=3)
+    sale_amount_label_updater= Label(updater, text='Sale Amount', font=('bold',10))
+    sale_amount_label_updater.grid(row=i+4,column=3)
+    
+    global sale_med_id_updater,sale_med_cost_updater,sale_batch_id_updater,sale_quantity_updater,sale_amount_updater
+    sale_med_id_updater= Entry(updater,width=30)
+    sale_med_id_updater.grid(row=i, column=4,pady=(10,0))
+    sale_med_cost_updater= Entry(updater,width=30)
+    sale_med_cost_updater.grid(row=i+1, column=4)
+    sale_batch_id_updater= Entry(updater,width=30)
+    sale_batch_id_updater.grid(row=i+2, column=4)
+    sale_quantity_updater= Entry(updater,width=30)
+    sale_quantity_updater.grid(row=i+3, column=4)
+    sale_amount_updater= Entry(updater,width=30)
+    sale_amount_updater.grid(row=i+4, column=4)
+
+    
+    updatesale1 = Button(updater, text="Update sale Data", command=updatesale)
+    updatesale1.grid(row=i+6,column=4,pady=(10,0))
+    
+
+
+    i=28
     username_label_updater= Label(updater,text='Enter username', font=('bold', 10))
-    username_label_updater.grid(row=20, column=0)
+    username_label_updater.grid(row=i, column=0,pady=(10,0))
     user_phone_label_updater = Label (updater, text='Enter user_phone', font=('bold',10))
-    user_phone_label_updater.grid(row=21, column=0)
+    user_phone_label_updater.grid(row=i+1, column=0)
     user_email_label_updater= Label( updater,text='Enter user_email', font=('bold', 10))
-    user_email_label_updater.grid(row=22, column=0)
+    user_email_label_updater.grid(row=i+2, column=0)
     user_street_label_updater = Label (updater, text='Enter user_street', font=('bold',10))
-    user_street_label_updater.grid(row=23, column=0)
+    user_street_label_updater.grid(row=i+3, column=0)
     user_city_label_updater= Label(updater,text='Enter user_city', font=('bold', 10))
-    user_city_label_updater.grid(row=24, column=0)
+    user_city_label_updater.grid(row=i+4, column=0)
     user_state_label_updater = Label (updater, text='Enter user_state', font=('bold',10))
-    user_state_label_updater.grid(row=25, column=0)
+    user_state_label_updater.grid(row=i+5, column=0)
     user_pincode_label_updater= Label( updater,text='Enter user_pincode', font=('bold', 10))
-    user_pincode_label_updater.grid(row=26, column=0)
+    user_pincode_label_updater.grid(row=i+6, column=0)
     
     global username_updater,user_phone_updater,user_email_updater,user_street_updater,user_city_updater,user_state_updater,user_pincode_updater
     username_updater= Entry(updater,width=30)
-    username_updater.grid(row=20, column=1)
+    username_updater.grid(row=i+0, column=1,pady=(10,0))
     user_phone_updater= Entry(updater,width=30)
-    user_phone_updater.grid(row=21, column=1)
+    user_phone_updater.grid(row=i+1, column=1)
     user_email_updater= Entry(updater,width=30)
-    user_email_updater.grid(row=22, column=1)
+    user_email_updater.grid(row=i+2, column=1)
     user_street_updater= Entry(updater,width=30)
-    user_street_updater.grid(row=23, column=1)
+    user_street_updater.grid(row=i+3, column=1)
     user_city_updater= Entry(updater,width=30)
-    user_city_updater.grid(row=24, column=1)
+    user_city_updater.grid(row=i+4, column=1)
     user_state_updater= Entry(updater,width=30)
-    user_state_updater.grid(row=25, column=1)
+    user_state_updater.grid(row=i+5, column=1)
     user_pincode_updater= Entry(updater,width=30)
-    user_pincode_updater.grid(row=26, column=1)
+    user_pincode_updater.grid(row=i+6, column=1)
     updateuser1 = Button(updater, text="Update User Data", command=updateuser)
-    updateuser1.grid(row=27,column=0)
+    updateuser1.grid(row=i+8,column=0,pady=(10,0))
     con = mysql.connect(
     host="localhost",
     user="root",
@@ -468,6 +651,20 @@ def updater():
         med_brand_updater.insert(0, med_record[3])
     med_id_updater.config(state=DISABLED)
 	
+    cursor = con.cursor()
+    cursor.execute("SELECT login_id,login_username, login_password,role_id,role_type FROM login l inner join user_info u on l.login_username=u.username inner join role r on r.role_user_id=l.login_id WHERE login_username='"+ username.get()+"'")
+    login_records = cursor.fetchall()
+    for login_record in login_records:
+        login_id_updater.insert(0, login_record[0])
+        login_username_updater.insert(0, login_record[1])
+        login_password_updater.insert(0, login_record[2])
+        role_id_updater.insert(0, login_record[3])
+        role_type_updater.insert(0, login_record[4])
+    role_id_updater.config(state=DISABLED)
+    login_username_updater.config(state=DISABLED)
+    login_id_updater.config(state=DISABLED)
+
+
 
     cursor.execute("SELECT * FROM batch WHERE batch_no='"+ batch_no.get()+"'")
     batch_records = cursor.fetchall()
@@ -476,6 +673,7 @@ def updater():
         batch_med_stock_updater.insert(0, batch_record[1])
         batch_mfg_updater.insert(0, batch_record[2])
         batch_expdate_updater.insert(0, batch_record[3])
+        batch_med_id_updater.insert(0,batch_record[4])
     batch_no_updater.config(state=DISABLED)
     
     cursor.execute("SELECT * FROM organisation WHERE org_id='"+ org_id.get()+"'")
@@ -498,6 +696,16 @@ def updater():
     sale_id_updater.config(state=DISABLED)
     sale_date_updater.config(state=DISABLED)
 
+    cursor.execute("SELECT * FROM sales WHERE sale_id='"+ sale_id.get()+"'")
+    sale_records = cursor.fetchall()
+    for sale_record in sale_records:
+        sale_med_id_updater.insert(0, sale_record[1])
+        sale_med_cost_updater.insert(0, sale_record[2])
+        sale_batch_id_updater.insert(0, sale_record[3])
+        sale_quantity_updater.insert(0,sale_record[4])
+        sale_amount_updater.insert(0,sale_record[2]*sale_record[4])
+        
+    sale_amount_updater.config(state= DISABLED)
     cursor.execute("SELECT * FROM user_info WHERE username='"+ username.get()+"'")
     user_records = cursor.fetchall()
     for user_record in user_records:
@@ -516,6 +724,7 @@ def updater():
 
 def update():
     update=Tk()
+    update.title("Update a Record")
     update.geometry("600x300")
     global med_id, batch_no, sale_id, org_id, username
     med_id_label= Label(update,text='Enter med_id', font=('bold', 10))
@@ -552,6 +761,7 @@ def update():
     username= Entry(update,width=30)
     username.place(x=200, y=120)
     #username.pack()
+    
     update = Button(update, text="Update Data", command=updater)
     update.place(x=250, y=150)
 
@@ -616,7 +826,7 @@ def delete():
 def Sale():
     global top
     top = Toplevel()
-    top.geometry('300x200')
+    top.geometry('500x200')
 
     billstr="Enter type to retrieve data according to"
     blabel=Label( top,text=billstr)
@@ -627,19 +837,29 @@ def Sale():
     tab.set("Sale id")
     dropcol=OptionMenu(top,tab,*col)
     dropcol.pack()
+    billsort="Sort by:"
+    billsort_label=Label(top, text=billsort)
+    billsort_label.pack()
+    global tab1
+    tab1= StringVar()
+    tab1.set("Date")
+    dropcol1=OptionMenu(top,tab1,*col)
+    dropcol1.pack()
 
     top.title("Enter Sale Id")
-    salelb=Label( top,text='Enter details for \nwhich you want \ndetails for')
-    salelb.place(x=10,y=50)
+    salelb=Label( top,text='Enter details for which you want details for')
+    salelb.place(x=10,y=120)
     global saleid
     saleid= Entry(top)
-    saleid.place(x=150, y=60)
+    saleid.place(x=300, y=120)
     sale = Button(top, text="Get Sale details", command=submit_sale)
-    sale.place(x=80, y=120)
+    sale.place(x=200, y=170)
 
 def submit_sale():
     global sid
     sid = saleid.get()
+    sort_id= tab1.get()
+    print(sort_id)
     top.destroy()
     con = mysql.connect(host="localhost", user="root", password="LETSdoDBMS8", database="dbms_medicine")
     cursor = con.cursor()   
@@ -659,20 +879,31 @@ def submit_sale():
     else:
         colname="sale_details.user_id"
 
-    cursor.execute("select sales.medicine_id,medicine.medicine_name,sales.batch_id,sales.quantity,medicine.medicine_cost,(sales.quantity*medicine.medicine_cost) as \"Amount\" from sales join medicine on sales.medicine_id=medicine.medicine_id join sale_details on sales.sale_id=sale_details.sale_id join organisation  on sale_details.org_id=organisation.org_id where "+colname+"=\'"+sid+"\';")
+    if(tab1.get()=="Sale id"):
+        colname1="sales.sale_id"
+    elif(tab1.get()=="Date"):
+        colname1="sale_details.sale_date"
+    elif(tab1.get()=="Organisation"):
+        colname1="sale_details.org_id"
+    elif(tab1.get()=="Medicine Name"):
+        colname1="medicine.medicine_name"
+    else:
+        colname1="sale_details.user_id"
+
+    cursor.execute("select sale_details.sale_date,sales.medicine_id,medicine.medicine_name,sales.batch_id,sales.quantity,medicine.medicine_cost,(sales.quantity*medicine.medicine_cost) as \"Amount\" from sales join medicine on sales.medicine_id=medicine.medicine_id join sale_details on sales.sale_id=sale_details.sale_id join organisation  on sale_details.org_id=organisation.org_id where "+colname+"=\'"+sid+"\' order by "+colname1+" desc;")
     bill = cursor.fetchall()
     top2=Toplevel()
     if(tab.get()=="Sale id"):
         billstr="Bill id: "+sid+"\t\t\t Date:"+str(sd)
         blabel=Label( top2,text=billstr)
         blabel.pack()
-    list=Listbox(top2,width=65)
+    list=Listbox(top2,width=100)
     list.pack()
-    list.insert(END,"medicine id   medicine name  batch id   quantity   medicine cost   amount")
+    list.insert(END,"sale date  medicine id   medicine name  batch id   quantity   medicine cost   amount")
     sum=0
     for row in bill:
-        sum=sum+row[5]
-        insert=str(row[0])+'                 '+str(row[1])+'             '+str(row[2])+'          '+str(row[3])+'            '+str(row[4])+'                        '+str(row[5])
+        sum=sum+row[6]
+        insert=str(row[0])+'                 '+str(row[1])+'             '+str(row[2])+'          '+str(row[3])+'            '+str(row[4])+'                        '+str(row[5])+'                    '+str(row[6])
         list.insert(END,insert)
     con.close()
     amount="Total Amount: "+str(sum)
@@ -682,7 +913,7 @@ def submit_sale():
 def Med():
     global top
     top = Toplevel()
-    top.geometry('300x200')
+    top.geometry('500x200')
 
     billstr="Enter type to retrieve data according to"
     blabel=Label( top,text=billstr)
@@ -695,13 +926,13 @@ def Med():
     dropcol.pack()
 
     top.title("Enter Med Id")
-    medlb=Label( top,text='Enter Medicine details for \nwhich you want \ndetails for')
-    medlb.place(x=10,y=50)
+    medlb=Label( top,text='Enter Medicine details for which you want details for')
+    medlb.place(x=10,y=70)
     global medn
     medn= Entry(top)
-    medn.place(x=150, y=60)
+    medn.place(x=300, y=70)
     med = Button(top, text="Get Medicine details", command=Med_det)
-    med.place(x=80, y=120)
+    med.place(x=200, y=120)
 
 def Med_det():
     mn = medn.get()
@@ -720,19 +951,20 @@ def Med_det():
     else:
         colname=""
 
-    cursor.execute("select medicine.medicine_id,batch.batch_no,medicine.medicine_name,medicine.medicine_brand,medicine.medicine_cost,batch.medicine_stock,batch.manufacture_date,batch.expiry_date from medicine inner join batch on medicine_id=batch.med_id where "+colname+"=\'"+mn+"\';")
+    cursor.execute("select medicine.medicine_id,batch.batch_no,medicine.medicine_name,medicine.medicine_brand,medicine.medicine_cost,batch.medicine_stock,batch.manufacture_date,batch.expiry_date from medicine inner join batch on medicine_id=batch.med_id where "+colname+"=\'"+mn+"\' order by expiry_date;")
     med_d = cursor.fetchall()
     top2=Toplevel()
-    list=Listbox(top2,width=90)
+    list=Listbox(top2,width=100)
     list.pack()
     list.insert(END,"Med id        batch id     name         brand         cost        stock          manufature date          expiry date")
     for row in med_d:
-    	insert=str(row[0])+'            '+str(row[1])+'           '+str(row[2])+'     '+str(row[3])+'      '+str(row[4])+'          '+str(row[5])+'               '+str(row[6])+'                     '+str(row[7])
+    	insert=str(row[0])+'            '+str(row[1])+'           '+str(row[2])+'     '+str(row[3])+'      '+str(row[4])+'          '+str(row[5])+'               '+str(row[6])+'                '+str(row[7])
     	list.insert(END,insert)
     con.close()
 
 def show():
     show=Tk()
+    show.title("View Medicines and Sales")
     show.geometry("300x300")
     sale = Button(show, text="Get Sale details", command=lambda : Sale())
     sale.place(x=100, y=75)
@@ -743,7 +975,7 @@ def show():
 def manager():
     login.destroy()
     manager=Tk()
-    manager.title("DBMS")
+    manager.title("Hi Manager!")
     manager.geometry("600x300")
 
     id=Label(manager)
@@ -757,19 +989,19 @@ def manager():
     global add, update, delete, show
     add = Button(manager, text="Add New Data", command=add)
     add.place(x=100, y=180)
-    add.pack()
+    add.pack(padx=10,pady=10)
 
     update = Button(manager, text="Update Data", command=update)
     update.place(x=250, y=150)
-    update.pack()
+    update.pack(padx=10,pady=10)
 
     delete = Button(manager, text="Delete Data", command=delete)
     delete.place(x=250, y=190)
-    delete.pack()
+    delete.pack(padx=10,pady=10)
 
     show= Button(manager, text="View Data", command=show)
     show.place(x=250, y=230)
-    show.pack()
+    show.pack(padx=10,pady=10)
 
     Back1 = Button(manager,text="Signout",command=lambda:[manager.destroy(),mainpage()]).pack()
 
@@ -781,7 +1013,7 @@ def manager():
 def employee():
     login.destroy()
     employee=Tk()
-    employee.title("DBMS")
+    employee.title("Hi Employee!")
     employee.geometry("600x300")
 
     id=Label(employee)
@@ -795,12 +1027,15 @@ def employee():
     
     show1= Button(employee, text="View Data", command=show)
     show1.place(x=250, y=230)
-    show1.pack()
+    show1.pack(padx=10,pady=10)
     Back2 = Button(employee,text="Signout",command=lambda:[employee.destroy(),mainpage()]).pack()
     print("in")
     cursor = con.cursor()
     con.close()
     employee.mainloop()
+
+def denied():
+    MessageBox.showinfo("Login","Access Denied!")
 
 def submit():
     print(username)
@@ -808,19 +1043,25 @@ def submit():
         MessageBox.showinfo("Insert Status","All Field are required")
     else:
         con = mysql.connect(host="localhost", user="root", password="LETSdoDBMS8", database="dbms_medicine")
-        cursor = con.cursor()        
+        cursor = con.cursor()       
+        cursor.execute("SELECT EXISTS(SELECT * from login WHERE Login_username='"+username.get()+"');") 
+        result1=cursor.fetchall()
+        #print(result1[0])
+        if(result1[0][0]==0):
+            denied()
         cursor.execute("select login_password,role_type from login inner join role on role_user_id=login_id where Login_username=\'"+username.get()+"\'")
         result = cursor.fetchall()
-        print(password.get())
+        global access
+        access = StringVar()
         for row in result:
-            print(row)
             if row[0]==password.get():
                 if row[1]=='Manager':
                     manager()
                 elif row[1]=='Employee':
                     employee()
             else:
-                print("Entry Denied")
+                denied()
+        
         con.close()
 
 def login():
@@ -828,7 +1069,11 @@ def login():
     flag = "pat_login"
     main.destroy()
     login = Tk()
+    login.title("Login Page")
     login.geometry("700x500")
+
+    login.iconbitmap('D:\\ADI\\VIT MATERIALS 3\\DBMS\\Pharmacy-DBMS\\pharmacy.ico')
+
     username_label = Label(login,text="Enter your name below: ")
     password_label = Label(login,text="Enter your password below: ")
     username_label.pack()
@@ -839,11 +1084,37 @@ def login():
     password.pack()
     Sign_in = Button(login,text="Sign in",command=submit).pack()
     Back = Button(login,text="back to Mainpage",command=lambda:[login.destroy(),mainpage()]).pack()
+
+    canvas = Canvas(login, width = 500, height = 400)
+    canvas.pack()
+    img = ImageTk.PhotoImage(Image.open("capture1.jpeg"))
+    canvas.create_image(20, 20, anchor=NW, image=img)
+
     login.mainloop()
+
 def mainpage():
     global main
     main=Tk()
-    main_login_btn= Button(main, text="Login", command=login).pack()
+    main.title("Main Page")
+    main.geometry("300x300")
+    main.iconbitmap('D:\\ADI\\VIT MATERIALS 3\\DBMS\\Pharmacy-DBMS\\pharmacy.ico')
+    canvas = Canvas(main, width = 100, height = 100)
+    canvas.pack()
+    
+    image=Image.open("capture.jpeg")    # The (450, 350) is (height, width)
+    image = image.resize((100, 100), Image.ANTIALIAS)
+    my_img = ImageTk.PhotoImage(image)
+    my_img = Label(image = my_img)
+    #my_img.pack()
+    img = ImageTk.PhotoImage(image) 
+    canvas.create_image(0,0,anchor=NW, image=img)
+    main2=Label(main,text="Welcome to PHARMACY-DBMS",font=('Times New Roman',15,'bold'))
+    main2.pack()
+    main1=Label(main, text="Please Enter the Login Credentials", font=('Helvetica', 10, 'bold'))
+    main1.pack()
+
+    main_login_btn= Button(main, text="Login", command=login)
+    main_login_btn.pack(padx=10,pady=10)
     main.mainloop()
 
 mainpage()
